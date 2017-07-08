@@ -6,6 +6,8 @@ import { User } from './user'
 
 @Injectable()
 export class MockBackendService {
+  private readonly jsonHeaders = new Headers({ 'Content-Type': 'application/json' })
+
   private readonly logins = {
     'zer0': 'password',
     'rootUserAdmin': '1337'
@@ -29,39 +31,45 @@ export class MockBackendService {
   }
 
   start() {
-    this.backend.connections.subscribe((c: MockConnection) => {
-      const URL = 'http://localhost:4200/'
-      if (c.request.url === '/token' && c.request.method === RequestMethod.Post) {
-        try {
-          const [_, username, password] = c.request.getBody().match(/username=([^&]+)&password=(.*)/)
-          if (!this.logins[username] || this.logins[username] !== password) {
-            return c.mockRespond(new Response(new ResponseOptions({
-              body: '{}',
-              status: 401,
-              headers: new Headers({ 'Content-Type': 'application/json' })
-            })))
-          }
-          const token = this.tokens[username] || this.generateToken()
-          this.tokens[username] = token
-          return c.mockRespond(new Response(new ResponseOptions({
-              body: `{"token":"${token}"}`,
-              headers: new Headers({ 'Content-Type': 'application/json' })
-          })))
-        } catch (e) {
-          return c.mockRespond(new Response(new ResponseOptions({
-            body: '{}',
-            status: 400,
-            headers: new Headers({ 'Content-Type': 'application/json' })
-          })))
-        }
-      }
+    const requestHandlers: [RequestMethod, string, (c: MockConnection) => void][] = [
+      [RequestMethod.Post, '/token', this.handleTokenRequest],
+    ]
+    const notFoundHandler = (c: MockConnection) => c.mockRespond(new Response(new ResponseOptions({
+      body: '{"message":"not found"}',
+      status: 404,
+      headers: this.jsonHeaders
+    })))
 
-      // Default to 404
-      return c.mockRespond(new Response(new ResponseOptions({
-        body: '{"message":"not found"}',
-        status: 404,
-        headers: new Headers({ 'Content-Type': 'application/json' })
-      })))
+    this.backend.connections.subscribe((c: MockConnection) => {
+      try {
+        const requestHandler = requestHandlers
+          .find(([method, path, _]) => method === c.request.method && path === c.request.url)
+        const handler = (requestHandler && requestHandler[2]) || notFoundHandler
+        handler(c)
+      } catch (e) {
+        c.mockRespond(new Response(new ResponseOptions({
+          body: '{}',
+          status: 400,
+          headers: this.jsonHeaders
+        })))
+      }
     })
+  }
+
+  handleTokenRequest(c: MockConnection) {
+    const [_, username, password] = c.request.getBody().match(/username=([^&]+)&password=(.*)/)
+    if (!this.logins[username] || this.logins[username] !== password) {
+      return c.mockRespond(new Response(new ResponseOptions({
+        body: '{}',
+        status: 401,
+        headers: this.jsonHeaders
+      })))
+    }
+    const token = this.tokens[username] || this.generateToken()
+    this.tokens[username] = token
+    return c.mockRespond(new Response(new ResponseOptions({
+        body: `{"token":"${token}"}`,
+        headers: this.jsonHeaders
+    })))
   }
 }
