@@ -9,11 +9,13 @@ import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AuthenticationService } from './authentication.service';
 import { UserService } from './user.service'
+import { ObjectKeysPipe } from './object-keys.pipe'
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    ObjectKeysPipe
   ],
   imports: [
     HttpModule,
