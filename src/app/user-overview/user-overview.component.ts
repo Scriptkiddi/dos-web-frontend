@@ -22,7 +22,7 @@ export class UserOverviewComponent implements OnInit {
       if (turn++ % 3 === 2) return acc
       acc[letter] = [0,1,2,3,4,5,6,7].map(id =>
         new User(`${letter}${id}`, 'User', `${letter.toUpperCase()}${id}`, 10, {
-          modDrink: false, modSupplier: false, modUser: false, pathDrinkAll: false, setOwnPass: false
+          Type: 'user', ModDrink: false, ModSuppliers: false, ModUser: false, PatchDrinkEveryone: false, SetOwnPassword: false
         })
       )
       return acc
@@ -36,6 +36,6 @@ export class UserOverviewComponent implements OnInit {
   }
 
   onClick(user: User) {
-    console.log(user.username)
+    console.log(user.Username)
   }
 }
