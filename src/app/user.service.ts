@@ -4,10 +4,11 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import { User } from './user'
+import { API_ENDPOINT } from './app-settings'
 
 @Injectable()
 export class UserService {
-  private readonly userEndpoint = '/user'
+  private readonly userEndpoint =`${API_ENDPOINT}/user`
 
   constructor(private http: Http) { }
 

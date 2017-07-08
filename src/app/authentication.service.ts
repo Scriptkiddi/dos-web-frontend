@@ -3,12 +3,13 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { User } from './user'
+import { API_ENDPOINT } from './app-settings'
 
 import 'rxjs/add/operator/toPromise'
 
 @Injectable()
 export class AuthenticationService {
-  private readonly tokenEndpoint = '/token'
+  private readonly tokenEndpoint = `${API_ENDPOINT}/token`
 
   constructor(private http: Http) { }
 
