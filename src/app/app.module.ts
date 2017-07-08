@@ -12,13 +12,15 @@ import { DrinksService } from './drinks.service'
 import { UserService } from './user.service';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { ObjectKeysPipe } from './object-keys.pipe'
+import { UserOrderComponent } from './user-order/user-order.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     UserOverviewComponent,
-    ObjectKeysPipe
+    ObjectKeysPipe,
+    UserOrderComponent
   ],
   imports: [
     HttpModule,

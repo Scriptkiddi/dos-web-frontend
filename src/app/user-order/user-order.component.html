@@ -1,0 +1,11 @@
+<div class="ui doubling three column stackable grid container">
+  <div *ngFor="let drink of drinks" (click)="onClick(drink)" class="column">
+    <div class="ui drink segment">
+      <img class="ui small right floated image" src="http://via.placeholder.com/150x150" />
+      <div>
+        <h3>{{drink.Name}}</h3>
+        <span>{{drink.PriceResell}} €</span>
+      </div>
+    </div>
+  </div>
+</div>
