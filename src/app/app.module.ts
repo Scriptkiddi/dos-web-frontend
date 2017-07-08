@@ -5,6 +5,7 @@ import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppComponent } from './app.component';
 import { AuthenticationService } from './authentication.service';
+import { UserService } from './user.service'
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { AuthenticationService } from './authentication.service';
     SuiModule
   ],
   providers: [
-    AuthenticationService
+    AuthenticationService,
+    UserService
   ],
   bootstrap: [AppComponent]
 })
