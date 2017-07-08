@@ -30,16 +30,11 @@ export class MockBackendService {
 
   start() {
     this.backend.connections.subscribe((c: MockConnection) => {
-      console.log('INCOMING REQUEST')
-      console.dir(c)
-
       const URL = 'http://localhost:4200/'
       if (c.request.url === '/token' && c.request.method === RequestMethod.Post) {
         try {
           const [_, username, password] = c.request.getBody().match(/username=([^&]+)&password=(.*)/)
-          console.dir([username, password])
           if (!this.logins[username] || this.logins[username] !== password) {
-            console.log('invalid credentials')
             return c.mockRespond(new Response(new ResponseOptions({
               body: '{}',
               status: 401,
@@ -48,13 +43,11 @@ export class MockBackendService {
           }
           const token = this.tokens[username] || this.generateToken()
           this.tokens[username] = token
-          console.log('success')
           return c.mockRespond(new Response(new ResponseOptions({
               body: `{"token":"${token}"}`,
               headers: new Headers({ 'Content-Type': 'application/json' })
           })))
         } catch (e) {
-          console.log('malformed request')
           return c.mockRespond(new Response(new ResponseOptions({
             body: '{}',
             status: 400,
