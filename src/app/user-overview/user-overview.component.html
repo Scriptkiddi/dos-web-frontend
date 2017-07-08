@@ -1,0 +1,10 @@
+<div class="ui main text container">
+  <div *ngFor="let item of usersByLetter | objectKeys" class="letter-box">
+    <h3 class="ui dividing header">{{item.key | uppercase}}</h3>
+    <div class="ui four column grid">
+      <div *ngFor="let user of item.value" (click)="onClick(user)" class="column">
+        <div class="ui segment">{{user.firstName}} {{user.lastName}}</div>
+      </div>
+    </div>
+  </div>
+</div>
