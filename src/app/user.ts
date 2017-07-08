@@ -2,7 +2,7 @@ export class User {
   constructor(
     public username: string,
     public fullName: string,
-    public credit: string,
+    public credit: number,
     public perms: {
       pathDrinkAll: boolean,
       modSupplier: boolean,
