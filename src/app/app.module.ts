@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing/app-routing.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { AppComponent } from './app.component';
   ],
   imports: [
     BrowserModule,
-    SuiModule
+    SuiModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
