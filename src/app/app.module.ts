@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppComponent } from './app.component';
+import { AuthenticationService } from './authentication.service';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,9 @@ import { AppComponent } from './app.component';
     BrowserModule,
     SuiModule
   ],
-  providers: [],
+  providers: [
+    AuthenticationService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
