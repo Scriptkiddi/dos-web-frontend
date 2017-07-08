@@ -34,4 +34,8 @@ export class AuthenticationService {
     // TODO: delete token on server
     localStorage.removeItem('token')
   }
+
+  get isLoggedIn(): boolean {
+    return typeof localStorage.getItem('token') === 'string'
+  }
 }
