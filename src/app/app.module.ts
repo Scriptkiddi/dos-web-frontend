@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AuthenticationService } from './authentication.service';
 import { UserService } from './user.service'
 
@@ -15,7 +16,8 @@ import { UserService } from './user.service'
   imports: [
     HttpModule,
     BrowserModule,
-    SuiModule
+    SuiModule,
+    AppRoutingModule
   ],
   providers: [
     AuthenticationService,
