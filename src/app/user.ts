@@ -1,7 +1,8 @@
 export class User {
   constructor(
     public username: string,
-    public fullName: string,
+    public firstName: string,
+    public lastName: string,
     public credit: number,
     public perms: {
       pathDrinkAll: boolean,
