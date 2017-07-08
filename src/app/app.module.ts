@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AuthenticationService } from './authentication.service';
+import { DrinksService } from './drinks.service'
 import { UserService } from './user.service';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
 import { ObjectKeysPipe } from './object-keys.pipe'
@@ -27,7 +28,8 @@ import { ObjectKeysPipe } from './object-keys.pipe'
   ],
   providers: [
     AuthenticationService,
-    UserService
+    UserService,
+    DrinksService
   ],
   bootstrap: [AppComponent]
 })
