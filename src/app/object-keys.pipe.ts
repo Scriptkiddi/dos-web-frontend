@@ -5,6 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ObjectKeysPipe implements PipeTransform {
   transform(value: any, args?: any): any {
-    return Object.keys(value).map(key => ({ key, value: value[key] }));
+    return Object.keys(value).sort().map(key => ({ key, value: value[key] }))
   }
 }
