@@ -3,6 +3,7 @@ import { Router } from '@angular/router'
 
 import { AuthenticationService } from '../authentication.service'
 import { AuthorizationService } from '../authorization.service'
+import { ActiveUsersService } from '../active-users.service'
 
 @Component({
   selector: 'login-page',
@@ -20,9 +21,7 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.authenticationService.isLoggedIn) {
-      this.authenticationService.refreshUser().then(() => this.loginSuccessful())
-    }
+    this.authenticationService.getPrimaryUser().then(() => this.loginSuccessful())
   }
 
   login(username: string, password: string) {
@@ -52,10 +51,11 @@ export class LoginComponent implements OnInit {
   }
 
   async loginSuccessful(): Promise<void> {
-    const user = await this.authenticationService.getActiveUser()
+    const user = await this.authenticationService.getPrimaryUser()
     if (await this.authorizationService.hasPatchDrinkEveryone(user)) {
       this.router.navigate(['/users'])
     } else {
+      this.authenticationService.setActiveUser(user)
       this.router.navigate(['/users', user.Username])
     }
   }

@@ -5,20 +5,48 @@ import { Observable } from 'rxjs/Observable';
 
 import { User } from './user'
 import { UserService } from './user.service'
+import { ActiveUsersService } from './active-users.service'
 import { TOKEN_ENDPOINT, USERS_ENDPOINT } from './app-settings'
 
 import 'rxjs/add/operator/toPromise'
 
 @Injectable()
 export class AuthenticationService {
-  private user: User = null
-
   constructor(
     private http: Http,
     private router: Router
   ) { }
 
-  async login(username: string, password: string): Promise<void> {
+  private primaryUser: User
+  private activeUser: User
+
+  async getPrimaryUser(): Promise<User> {
+    if (this.primaryUser) return this.primaryUser
+    if (localStorage.getItem('token')) {
+      try {
+        const user = await this.getUserFromToken()
+        this.primaryUser = user
+        this.activeUser = null
+        return user
+      } catch (_) { }
+    }
+    throw 'User not logged in'
+  }
+
+  async getActiveUser(): Promise<User> {
+    if (this.activeUser) return this.activeUser
+    return await this.getPrimaryUser()
+  }
+
+  setActiveUser(user: User) {
+    this.activeUser = user
+  }
+
+  async login(username: string, password: string): Promise<User> {
+    try {
+      await this.logout()
+    } catch (_) { }
+
     const { token }: { token: string } = await this.http
       .get(TOKEN_ENDPOINT, new RequestOptions({
         headers: new Headers({ 'Authorization': `Basic ${btoa(`${username}:${password}`)}` })
@@ -30,33 +58,40 @@ export class AuthenticationService {
       })
 
     localStorage.setItem('token', token)
-    await this.refreshUser()
+    return await this.getActiveUser()
   }
 
   async logout(): Promise<void> {
-    try {
-      await this.http.delete(TOKEN_ENDPOINT, new RequestOptions({
-        headers: this.authHeaders
-      })).toPromise()
-    } catch (_) { }
-
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    this.user = null
+    this.primaryUser = null
+    this.activeUser = null
 
-    this.router.navigate(['/'])
+    await this.http.delete(TOKEN_ENDPOINT, new RequestOptions({
+      headers: this.authHeaders
+    })).toPromise()
   }
 
-  async getActiveUser(): Promise<User> {
-    return this.user || await this.refreshUser()
+  getUserFromToken(): Promise<User> {
+    if (!localStorage.getItem('token')) throw 'No token set'
+    return this.http.get(`${USERS_ENDPOINT}/_self`, new RequestOptions({
+      headers: this.authHeaders
+    }))
+    .toPromise()
+    .then(res => {
+      if (res.status >= 400) throw res.json()
+      return res.json() as User
+    })
   }
 
-  get isLoggedIn(): boolean {
-    return typeof localStorage.getItem('token') === 'string'
+  async refreshPrimaryUser(): Promise<User> {
+    return this.primaryUser = await this.getUserFromToken()
   }
 
-  async refreshUser(): Promise<User> {
-    const user = await this.http.get(`${USERS_ENDPOINT}/_self`, new RequestOptions({
+  async refreshActiveUser(): Promise<User> {
+    if (!this.activeUser) {
+      this.activeUser = await this.refreshPrimaryUser()
+    }
+    const user = await this.http.get(`${USERS_ENDPOINT}/${this.activeUser.Username}`, new RequestOptions({
       headers: this.authHeaders
     }))
     .toPromise()
@@ -65,8 +100,7 @@ export class AuthenticationService {
       return res.json() as User
     })
 
-    localStorage.setItem('user', JSON.stringify(user))
-    this.user = user
+    this.activeUser = user
     return user
   }
 

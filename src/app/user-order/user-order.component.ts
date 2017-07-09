@@ -44,59 +44,14 @@ export class UserOrderComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
-    this.route.paramMap.map((params: ParamMap) => params.get('username'))
-      .subscribe(username => {
-        this.userService.getByUsername(username)
-          .catch(err => {
-            if (err.status === 401) {
-              return this.authenticationService.getActiveUser()
-            } else if (err.status === 404) {
-              this.router.navigate(['/users'])
-            }
-            throw err
-          })
-          .then(user => this.activeUser = user)
-          .then(() => this.drinksService.getAllFull())
-          .then(drinks => {
-            this.drinks = drinks
-          })
-          .catch(err => {
-            this.displayError(err)
-          })
-          .then(() => this.loading = false)
-      }, err => {
-        this.displayError(err)
-        this.loading = false
-      })
-
-    // this.route.paramMap
-    //   .switchMap((params: ParamMap) => this.userService.getByUsername(params.get('username')))
-    //   .subscribe(activeUser => {
-    //     console.dir(activeUser)
-    //     this.activeUser = activeUser
-    //   }, err => {
-    //     if (err.status === 401) {
-    //       this.router.navigate(['/users', '_self'])
-    //       // this.authenticationService.getActiveUser()
-    //       //   .then(user => { console.dir(user); return user })
-    //       //   .then(user => this.router.navigate(['/users', user.uid]))
-    //       //   .catch(err => {
-    //       //     this.displayError(err)
-    //       //   })
-    //     } else {
-    //       this.displayError(err)
-    //     }
-    //   })
-
-    // this.drinksService.getAll()
-    //   .then(drinks => drinks.map(ean => this.drinksService.getByEAN(ean)))
-    //   .then(drinkRequests => Promise.all(drinkRequests))
-    //   .then(drinks => this.drinks = drinks)
-    //   .then(() => this.loading = false)
-    //   .catch(err => {
-    //     this.displayError(err)
-    //     this.loading = false
-    //   })
+    this.authenticationService.getActiveUser().then(user => {
+      this.activeUser = user
+    })
+    .then(() => this.loadDrinks())
+    .catch(err => {
+      this.displayError(err)
+    })
+    .then(() => this.loading = false)
   }
 
   onClick(drink: Drink) {
@@ -109,16 +64,37 @@ export class UserOrderComponent implements OnInit {
       .open(config)
       .onApprove((drink: Drink) => {
         this.loading = true
-        this.drinksService.drink(drink.EAN)
-          .then(() => {
-            this.loading = false
-            // TODO: If PatchDrinkEveryone permission is set, redirect to user overview
-          })
-          .catch(err => {
-            this.loading = false
-            this.displayError(err)
-          })
+        Promise.all([
+          this.authenticationService.getPrimaryUser(),
+          this.authenticationService.getActiveUser()
+        ])
+        .then(([primaryUser, activeUser]) => {
+          if (primaryUser.Username === activeUser.Username) {
+            return this.drinksService.drink(drink.EAN)
+          } else {
+            return this.drinksService.drinkForUser(drink.EAN, activeUser.Username)
+          }
+        })
+        .then(async () => {
+          await this.loadDrinks()
+          await this.updateActiveUser()
+          this.loading = false
+          this.authenticationService.setActiveUser(null)
+          this.router.navigate(['/'])
+        })
+        .catch(err => {
+          this.loading = false
+          this.displayError(err)
+        })
       })
+  }
+
+  async loadDrinks(): Promise<void> {
+    this.drinks = await this.drinksService.getAllFull()
+  }
+
+  async updateActiveUser(): Promise<void> {
+    this.activeUser = await this.userService.getByUsername(this.activeUser.Username)
   }
 
   displayError(message: string) {

@@ -1,14 +1,16 @@
 <div class="ui huge fixed inverted menu">
   <div class="ui container">
-    <a class="item">
+    <a *ngIf="authenticationService.primaryUser?.Permissions === 'admin' && authenticationService.activeUser" (click)="goBack()" class="item">
       <i class="angle left icon"></i>
     </a>
     <span class="header item">
       Drink Ordering System
     </span>
-    <span class="right item">Full Name</span>
-    <span class="item">0.00€</span>
-    <a class="logout item" (click)="logout()">logout</a>
+    <span *ngIf="authenticationService.activeUser" class="right item">{{authenticationService.activeUser.FirstName}} {{authenticationService.activeUser.LastName}}</span>
+    <span *ngIf="authenticationService.activeUser" class="item">
+      {{authenticationService.activeUser.Credit}} €
+    </span>
+    <a *ngIf="authenticationService.primaryUser" [class.right]="!authenticationService.activeUser" class="logout item" (click)="logout()">logout</a>
   </div>
 </div>
 <div class="main content">

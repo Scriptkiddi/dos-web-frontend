@@ -49,8 +49,8 @@ export class DrinksService {
       .catch(res => { console.dir(res); throw res.json() })
   }
 
-  drinkForUser(ean: string, uid: string): Promise<void> {
-    return this.http.post(`${DRINKS_ENDPOINT}/${ean}/order/${uid}`, null, this.requestOptions)
+  drinkForUser(ean: string, username: string): Promise<void> {
+    return this.http.post(`${DRINKS_ENDPOINT}/${ean}/order?username=${username}`, null, this.requestOptions)
       .toPromise()
       .then(res => {
         if (res.status >= 400) throw res.json()

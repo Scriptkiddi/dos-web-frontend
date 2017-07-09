@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'
 
 import { User } from '../user'
 import { UserService } from '../user.service'
+import { AuthenticationService } from '../authentication.service'
 
 @Component({
   selector: 'user-overview',
@@ -22,7 +24,11 @@ export class UserOverviewComponent implements OnInit {
   loading = false
   errorMessage: string = null
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private authenticationService: AuthenticationService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.hideError()
@@ -32,7 +38,7 @@ export class UserOverviewComponent implements OnInit {
       .then(requests => Promise.all(requests))
       .then(users => {
         const usersByLetter: { [letter: string]: User[] } = users.reduce((acc, user) => {
-          const letter = user.Username.charAt(0).toLowerCase()
+          const letter = `${user.FirstName} ${user.LastName}`.trim().charAt(0).toLowerCase()
           acc[letter] = acc[letter] || []
           acc[letter].push(user)
           return acc
@@ -44,6 +50,11 @@ export class UserOverviewComponent implements OnInit {
         this.loading = false
         this.displayError(err)
       })
+  }
+
+  userSelected(user: User) {
+    this.authenticationService.setActiveUser(user)
+    this.router.navigate(['/users', user.Username])
   }
 
   displayError(message: string) {

@@ -48,6 +48,6 @@ export class AuthorizationService {
 
   async hasPatchDrinkEveryone(user: User): Promise<boolean> {
     const permissions = await this.getRoles()
-    return permissions[user.Permissions].PatchDrinkEveryone
+    return permissions[user.Permissions || 'user'].PatchDrinkEveryone
   }
 }
