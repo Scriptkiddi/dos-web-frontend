@@ -4,15 +4,15 @@
   </div>
 </div>
 
-<div class="ui doubling three column stackable grid container">
+<div class="ui doubling four column stackable grid container">
   <div *ngIf="loading" class="ui active dimmer">
     <div class="ui text loader">Bitte warten...</div>
   </div>
 
   <ng-template let-context let-modal="modal" #confirmationTemplate>
-    <div class="header">{{context.drink.Name}} ({{context.drink.PriceResell}} €) bestellen?</div>
+    <div class="header">{{context.drink.name}} ({{context.drink.priceResell}} €) bestellen?</div>
     <div class="content">
-      <p>Guthaben nach Kauf: {{-context.drink.PriceResell}} €</p>
+      <p>Guthaben nach Kauf: {{context.activeUser.credit - context.drink.priceResell}} €</p>
     </div>
     <div class="actions">
         <button class="ui negative right labeled icon button" (click)="modal.deny()">
@@ -28,10 +28,10 @@
 
   <div *ngFor="let drink of drinks" [class.disabled]="loading" (click)="!loading && onClick(drink)" class="column">
     <div class="ui drink segment">
-      <img class="ui small right floated image" src="http://via.placeholder.com/150x150" />
+      <img class="ui small right floated product image" src="http://35.156.87.172:80{{drink.imageUrl}}" />
       <div>
-        <h3>{{drink.Name}}</h3>
-        <span>{{drink.PriceResell}} €</span>
+        <h3>{{drink.name}}</h3>
+        <span>{{drink.priceResell}} €</span>
       </div>
     </div>
   </div>

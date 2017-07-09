@@ -1,12 +1,17 @@
 export class Drink {
   constructor(
-    public EAN: string,
-    public Name: string,
-    public PriceOrder: number,
-    public PriceResell: number,
-    public Amount: number,
-    public Supplier: any,
-    public RedeliverAmount: number,
-    public ImgUrl: string
+    public ean: string,
+    public name: string,
+    public priceOrder: number,
+    public priceResell: number,
+    public amount: number,
+    public supplier: {
+      id: string,
+      name: string,
+      address: string,
+      deliveryTime: number
+    },
+    public redeliverAmount: number,
+    public imageUrl: string
   ) { }
 }
