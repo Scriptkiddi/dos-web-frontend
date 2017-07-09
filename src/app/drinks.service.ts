@@ -15,13 +15,27 @@ export class DrinksService {
   getAll(): Promise<string[]> {
     return this.http.get(this.drinkEndpoint, this.requestOptions)
       .toPromise()
-      .then(response => response.json() as string[])
+      .then(res => {
+        if (res.status >= 400) throw res.json()
+        return res.json() as string[]
+      })
   }
 
   getByEAN(ean: string): Promise<Drink> {
     return this.http.get(`${this.drinkEndpoint}/${ean}`, this.requestOptions)
       .toPromise()
-      .then(response => response.json() as Drink)
+      .then(res => {
+        if (res.status >= 400) throw res.json()
+        return res.json() as Drink
+      })
+  }
+
+  remove(ean: string): Promise<void> {
+    return this.http.delete(`${this.drinkEndpoint}/${ean}`, this.requestOptions)
+      .toPromise()
+      .then(res => {
+        if (res.status >= 400) throw res.json()
+      })
   }
 
   private get requestOptions(): RequestOptions {
