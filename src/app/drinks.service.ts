@@ -4,16 +4,18 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import { Drink } from './drink'
-import { API_ENDPOINT } from './app-settings'
+import { AuthenticationService } from './authentication.service'
+import { DRINKS_ENDPOINT } from './app-settings'
 
 @Injectable()
 export class DrinksService {
-  private readonly drinkEndpoint =`${API_ENDPOINT}/drink`
-
-  constructor(private http: Http) { }
+  constructor(
+    private http: Http,
+    private authenticationService: AuthenticationService
+  ) { }
 
   getAll(): Promise<string[]> {
-    return this.http.get(this.drinkEndpoint, this.requestOptions)
+    return this.http.get(DRINKS_ENDPOINT, this.requestOptions)
       .toPromise()
       .then(res => {
         if (res.status >= 400) throw res.json()
@@ -21,8 +23,14 @@ export class DrinksService {
       })
   }
 
+  getAllFull(): Promise<Drink[]> {
+    return this.getAll()
+      .then(eans => eans.map(ean => this.getByEAN(ean)))
+      .then(requests => Promise.all(requests))
+  }
+
   getByEAN(ean: string): Promise<Drink> {
-    return this.http.get(`${this.drinkEndpoint}/${ean}`, this.requestOptions)
+    return this.http.get(`${DRINKS_ENDPOINT}/${ean}`, this.requestOptions)
       .toPromise()
       .then(res => {
         if (res.status >= 400) throw res.json()
@@ -30,8 +38,19 @@ export class DrinksService {
       })
   }
 
-  order(ean: string): Promise<void> {
-    return this.http.delete(`${this.drinkEndpoint}/${ean}`, this.requestOptions)
+  drink(ean: string): Promise<void> {
+    const requestOptions = this.requestOptions
+    console.dir(requestOptions)
+    return this.http.post(`${DRINKS_ENDPOINT}/${ean}/order`, null, requestOptions)
+      .toPromise()
+      .then(res => {
+        if (res.status >= 400) throw res
+      })
+      .catch(res => { console.dir(res); throw res.json() })
+  }
+
+  drinkForUser(ean: string, uid: string): Promise<void> {
+    return this.http.post(`${DRINKS_ENDPOINT}/${ean}/order/${uid}`, null, this.requestOptions)
       .toPromise()
       .then(res => {
         if (res.status >= 400) throw res.json()
@@ -39,12 +58,6 @@ export class DrinksService {
   }
 
   private get requestOptions(): RequestOptions {
-    const token = localStorage.getItem('token')
-    if (token) {
-      const headers = new Headers({ 'X-Tocken': token })
-      return new RequestOptions({ headers })
-    } else {
-      return null
-    }
+    return new RequestOptions({ headers: this.authenticationService.authHeaders })
   }
 }

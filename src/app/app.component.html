@@ -1,13 +1,16 @@
 <div class="ui huge fixed inverted menu">
   <div class="ui container">
+    <a class="item">
+      <i class="angle left icon"></i>
+    </a>
     <span class="header item">
       Drink Ordering System
     </span>
     <span class="right item">Full Name</span>
     <span class="item">0.00€</span>
-    <a class="ui logout item" (click)="logout()">logout</a>
+    <a class="logout item" (click)="logout()">logout</a>
   </div>
 </div>
 <div class="main content">
-  <login-page></login-page>
+  <router-outlet></router-outlet>
 </div>

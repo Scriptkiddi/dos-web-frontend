@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router'
 
 import { AuthenticationService } from '../authentication.service'
+import { AuthorizationService } from '../authorization.service'
 
 @Component({
   selector: 'login-page',
@@ -11,11 +13,15 @@ export class LoginComponent implements OnInit {
   errorMessage: string = null
   loginRunning: boolean = false
 
-  constructor(private authenticationService: AuthenticationService) { }
+  constructor(
+    private authenticationService: AuthenticationService,
+    private authorizationService: AuthorizationService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     if (this.authenticationService.isLoggedIn) {
-      this.loginSuccessful()
+      this.authenticationService.refreshUser().then(() => this.loginSuccessful())
     }
   }
 
@@ -45,7 +51,12 @@ export class LoginComponent implements OnInit {
     this.errorMessage = null
   }
 
-  loginSuccessful() {
-    // TODO: Redirect to user-order or user-overview, depending on PatchDrinkEveryone permission.
+  async loginSuccessful(): Promise<void> {
+    const user = await this.authenticationService.getActiveUser()
+    if (await this.authorizationService.hasPatchDrinkEveryone(user)) {
+      this.router.navigate(['/users'])
+    } else {
+      this.router.navigate(['/users', user.Username])
+    }
   }
 }

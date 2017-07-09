@@ -4,16 +4,18 @@ import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 
 import { User } from './user'
-import { API_ENDPOINT } from './app-settings'
+import { AuthenticationService } from './authentication.service'
+import { USERS_ENDPOINT } from './app-settings'
 
 @Injectable()
 export class UserService {
-  private readonly userEndpoint =`${API_ENDPOINT}/user`
-
-  constructor(private http: Http) { }
+  constructor(
+    private http: Http,
+    private authenticationService: AuthenticationService
+  ) { }
 
   getAll(): Promise<string[]> {
-    return this.http.get(this.userEndpoint, this.requestOptions)
+    return this.http.get(USERS_ENDPOINT, this.requestOptions)
       .toPromise()
       .then(response => response.json() as string[])
   }
@@ -23,18 +25,12 @@ export class UserService {
   }
 
   getByUsername(username: string): Promise<User> {
-    return this.http.get(`${this.userEndpoint}/${username}`, this.requestOptions)
+    return this.http.get(`${USERS_ENDPOINT}/${username}`, this.requestOptions)
       .toPromise()
       .then(response => response.json() as User)
   }
 
   private get requestOptions(): RequestOptions {
-    const token = localStorage.getItem('token')
-    if (token) {
-      const headers = new Headers({ 'X-Tocken': token })
-      return new RequestOptions({ headers })
-    } else {
-      return null
-    }
+    return new RequestOptions({ headers: this.authenticationService.authHeaders })
   }
 }

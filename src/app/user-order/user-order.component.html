@@ -10,9 +10,9 @@
   </div>
 
   <ng-template let-context let-modal="modal" #confirmationTemplate>
-    <div class="header">{{context.drink.name}} ({{context.drink.priceResell}} €) bestellen?</div>
+    <div class="header">{{context.drink.Name}} ({{context.drink.PriceResell}} €) bestellen?</div>
     <div class="content">
-      <p>Guthaben nach Kauf: {{context.activeUser.credit - context.drink.priceResell}} €</p>
+      <p>Guthaben nach Kauf: {{context.activeUser.Credit - context.drink.PriceResell}} €</p>
     </div>
     <div class="actions">
         <button class="ui negative right labeled icon button" (click)="modal.deny()">
@@ -26,13 +26,15 @@
     </div>
   </ng-template>
 
-  <div *ngFor="let drink of drinks" [class.disabled]="loading" (click)="!loading && onClick(drink)" class="column">
-    <div class="ui drink segment">
-      <img class="ui small right floated product image" src="http://35.156.87.172:80{{drink.imageUrl}}" />
-      <div>
-        <h3>{{drink.name}}</h3>
-        <span>{{drink.priceResell}} €</span>
+  <ng-container *ngIf="activeUser">
+    <div *ngFor="let drink of drinks" [class.disabled]="loading" (click)="!loading && onClick(drink)" class="column">
+      <div class="ui drink segment">
+        <img class="ui small right floated product image" src="http://35.156.87.172:80{{drink.ImgUrl}}" />
+        <div>
+          <h3>{{drink.Name}}</h3>
+          <span>{{drink.PriceResell}} €</span>
+        </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 </div>

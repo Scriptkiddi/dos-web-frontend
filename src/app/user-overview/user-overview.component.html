@@ -8,8 +8,8 @@
   <div *ngFor="let item of usersByLetter | objectKeys" class="letter-box">
     <h3 class="ui dividing header">{{item.key | uppercase}}</h3>
     <div class="ui doubling stackable four column grid">
-      <div *ngFor="let user of item.value" [routerLink]="['/users', user.uid]" class="column">
-        <div class="ui segment">{{user.givenName}} {{user.surname}}</div>
+      <div *ngFor="let user of item.value" [routerLink]="['/users', user.Username]" class="column">
+        <div class="ui segment">{{user.FirstName}} {{user.LastName}}</div>
       </div>
     </div>
   </div>

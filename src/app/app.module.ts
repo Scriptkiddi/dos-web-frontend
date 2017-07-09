@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AuthenticationService } from './authentication.service';
+import { AuthorizationService } from './authorization.service';
 import { DrinksService } from './drinks.service'
 import { UserService } from './user.service';
 import { UserOverviewComponent } from './user-overview/user-overview.component';
@@ -32,6 +33,7 @@ import { UserOrderComponent } from './user-order/user-order.component'
   ],
   providers: [
     AuthenticationService,
+    AuthorizationService,
     UserService,
     DrinksService
   ],
