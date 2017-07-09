@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
+import { FormsModule } from '@angular/forms';
 
 import { SuiModule } from 'ng2-semantic-ui';
 
@@ -24,6 +25,7 @@ import { UserOrderComponent } from './user-order/user-order.component'
   ],
   imports: [
     HttpModule,
+    FormsModule,
     BrowserModule,
     SuiModule,
     AppRoutingModule
