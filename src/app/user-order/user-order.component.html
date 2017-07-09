@@ -1,4 +1,14 @@
+<div *ngIf="errorMessage" class="ui text container">
+  <div class="ui red message">
+    {{errorMessage}}
+  </div>
+</div>
+
 <div class="ui doubling three column stackable grid container">
+  <div *ngIf="loading" class="ui active dimmer">
+    <div class="ui text loader">Bitte warten...</div>
+  </div>
+
   <ng-template let-context let-modal="modal" #confirmationTemplate>
     <div class="header">{{context.drink.Name}} ({{context.drink.PriceResell}} €) bestellen?</div>
     <div class="content">
@@ -9,13 +19,14 @@
           Abbrechen
           <i class="remove icon"></i>
         </button>
-        <button class="ui positive right labeled icon button" (click)="modal.approve()" autofocus>
+        <button class="ui positive right labeled icon button" (click)="modal.approve(context.drink)" autofocus>
           OK
           <i class="checkmark icon"></i>
         </button>
     </div>
   </ng-template>
-  <div *ngFor="let drink of drinks" (click)="onClick(drink)" class="column">
+
+  <div *ngFor="let drink of drinks" [class.disabled]="loading" (click)="!loading && onClick(drink)" class="column">
     <div class="ui drink segment">
       <img class="ui small right floated image" src="http://via.placeholder.com/150x150" />
       <div>

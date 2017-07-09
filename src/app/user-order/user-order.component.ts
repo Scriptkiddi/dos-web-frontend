@@ -3,6 +3,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui';
 
 import { Drink } from '../drink'
+import { DrinksService } from '../drinks.service'
 
 export interface IConfirmationModal {
   drink: Drink
@@ -15,27 +16,57 @@ export interface IConfirmationModal {
 })
 export class UserOrderComponent implements OnInit {
   @ViewChild('confirmationTemplate')
-  public confirmationTemplate: ModalTemplate<IConfirmationModal, void, void>
+  public confirmationTemplate: ModalTemplate<IConfirmationModal, Drink, void>
 
-  drinks: Drink[] = (() => {
-    return [0,1,2,3,4,5,6,7,8].map(id =>
-      new Drink(`${id}`, `Drink ${id}`, (id / 8) + 0.7, (id / 8) + 1, 10, null, 0, '')
-    )
-  })()
+  drinks: Drink[] = []
 
-  constructor(public modalService: SuiModalService) { }
+  loading = false
+  errorMessage: string = null
+
+  constructor(
+    public modalService: SuiModalService,
+    public drinksService: DrinksService
+  ) { }
 
   ngOnInit() {
+    this.drinksService.getAll()
+      .then(drinks => drinks.map(ean => this.drinksService.getByEAN(ean)))
+      .then(Promise.all)
+      .then(drinks => this.drinks = drinks)
+      .then(() => this.loading = false)
+      .catch(err => {
+        this.displayError(err)
+        this.loading = false
+      })
   }
 
   onClick(drink: Drink) {
-    const config = new TemplateModalConfig<IConfirmationModal, void, void>(this.confirmationTemplate)
+    const config = new TemplateModalConfig<IConfirmationModal, Drink, void>(this.confirmationTemplate)
 
     config.context = { drink }
     config.size = 'small'
 
     this.modalService
       .open(config)
-      .onApprove(() => console.log('approved'))
+      .onApprove((drink: Drink) => {
+        this.loading = true
+        this.drinksService.order(drink.EAN)
+          .then(() => {
+            this.loading = false
+            // TODO: If PatchDrinkEveryone permission is set, redirect to user overview
+          })
+          .catch(err => {
+            this.loading = false
+            this.displayError(err)
+          })
+      })
+  }
+
+  displayError(message: string) {
+    this.errorMessage = message
+  }
+
+  hideError() {
+    this.errorMessage = null
   }
 }
