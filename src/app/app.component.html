@@ -1,3 +1,26 @@
+<ng-template let-context let-modal="modal" #depositTemplate>
+  <div class="header">Einzahlung für {{context.user.FirstName}} {{context.user.LastName}} ({{context.user.Username}})</div>
+  <div class="content">
+    <p>Aktuelles Guthaben: {{context.user.Credit}}</p>
+    <div class="ui right labeled input">
+      <input placeholder="Einzahlung" [(ngModel)]="amount" type="number">
+      <div class="ui basic label">
+        €
+      </div>
+    </div>
+  </div>
+  <div class="actions">
+      <button class="ui negative right labeled icon button" (click)="modal.deny()">
+        Abbrechen
+        <i class="remove icon"></i>
+      </button>
+      <button class="ui positive right labeled icon button" (click)="modal.approve(amount)" autofocus>
+        Einzahlen
+        <i class="checkmark icon"></i>
+      </button>
+  </div>
+</ng-template>
+
 <div class="ui huge fixed inverted menu">
   <div class="ui container">
     <a *ngIf="authenticationService.primaryUser?.Permissions === 'admin' && authenticationService.activeUser" (click)="goBack()" class="item">
@@ -8,7 +31,7 @@
     </span>
     <span *ngIf="authenticationService.activeUser" class="right item">{{authenticationService.activeUser.FirstName}} {{authenticationService.activeUser.LastName}}</span>
     <span *ngIf="authenticationService.activeUser" class="item">
-      {{authenticationService.activeUser.Credit}} €
+      {{authenticationService.activeUser.Credit}} € <a (click)="deposit()"><i class="plus icon"></i></a>
     </span>
     <a *ngIf="authenticationService.primaryUser" [class.right]="!authenticationService.activeUser" class="logout item" (click)="logout()">logout</a>
   </div>

@@ -30,6 +30,19 @@ export class UserService {
       .then(response => response.json() as User)
   }
 
+  async depositMoney(username: string, amount: number): Promise<void> {
+    console.log(amount)
+    console.log((new Error()).stack)
+    const user = await this.authenticationService.getActiveUser()
+    user.Credit += amount
+    return this.http.patch(`${USERS_ENDPOINT}/${username}`, JSON.stringify({credit: 10}), this.requestOptions)
+      .toPromise()
+      .then(() => {
+        this.authenticationService.refreshActiveUser()
+        this.authenticationService.refreshPrimaryUser()
+      })
+  }
+
   private get requestOptions(): RequestOptions {
     return new RequestOptions({ headers: this.authenticationService.authHeaders })
   }

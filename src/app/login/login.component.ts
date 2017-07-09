@@ -3,7 +3,6 @@ import { Router } from '@angular/router'
 
 import { AuthenticationService } from '../authentication.service'
 import { AuthorizationService } from '../authorization.service'
-import { ActiveUsersService } from '../active-users.service'
 
 @Component({
   selector: 'login-page',

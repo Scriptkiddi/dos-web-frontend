@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable';
 
 import { User } from './user'
 import { UserService } from './user.service'
-import { ActiveUsersService } from './active-users.service'
 import { TOKEN_ENDPOINT, USERS_ENDPOINT } from './app-settings'
 
 import 'rxjs/add/operator/toPromise'
