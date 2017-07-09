@@ -20,10 +20,7 @@ export class AuthenticationService {
       }))
       .toPromise()
       .then(res => {
-        console.log(res)
-        if (res.status >= 400) {
-          throw res.json()
-        }
+        if (res.status >= 400) throw res.json()
         return res.json()
       })
 
