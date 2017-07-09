@@ -5,13 +5,22 @@ import { HttpModule } from '@angular/http';
 import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { AuthenticationService } from './authentication.service';
-import { UserService } from './user.service'
+import { DrinksService } from './drinks.service'
+import { UserService } from './user.service';
+import { UserOverviewComponent } from './user-overview/user-overview.component';
+import { ObjectKeysPipe } from './object-keys.pipe'
+import { UserOrderComponent } from './user-order/user-order.component'
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    UserOverviewComponent,
+    ObjectKeysPipe,
+    UserOrderComponent
   ],
   imports: [
     HttpModule,
@@ -21,7 +30,8 @@ import { UserService } from './user.service'
   ],
   providers: [
     AuthenticationService,
-    UserService
+    UserService,
+    DrinksService
   ],
   bootstrap: [AppComponent]
 })

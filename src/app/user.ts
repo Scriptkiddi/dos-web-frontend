@@ -1,14 +1,16 @@
 export class User {
   constructor(
-    public username: string,
-    public fullName: string,
-    public credit: number,
-    public perms: {
-      pathDrinkAll: boolean,
-      modSupplier: boolean,
-      modDrink: boolean,
-      modUser: boolean,
-      setOwnPass: boolean
+    public Username: string,
+    public FirstName: string,
+    public LastName: string,
+    public Credit: number,
+    public Permissions: {
+      Type: string,
+      PatchDrinkEveryone: boolean,
+      ModSuppliers: boolean,
+      ModDrink: boolean,
+      ModUser: boolean,
+      SetOwnPassword: boolean
     }
   ) { }
 }
