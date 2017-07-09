@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { User } from '../user'
+import { UserService } from '../user.service'
 
 @Component({
   selector: 'user-overview',
@@ -16,26 +17,43 @@ export class UserOverviewComponent implements OnInit {
     return letters
   })()
 
-  usersByLetter: { [letter: string]: User[] } = (() => {
-    let turn = 0
-    return this.letters.reduce((acc, letter) => {
-      if (turn++ % 3 === 2) return acc
-      acc[letter] = [0,1,2,3,4,5,6,7].map(id =>
-        new User(`${letter}${id}`, 'User', `${letter.toUpperCase()}${id}`, 10, {
-          Type: 'user', ModDrink: false, ModSuppliers: false, ModUser: false, PatchDrinkEveryone: false, SetOwnPassword: false
-        })
-      )
-      return acc
-    }, { })
-  })()
+  usersByLetter: { [letter: string]: User[] } = { }
 
-  constructor() {
-  }
+  loading = false
+  errorMessage: string = null
+
+  constructor(private userService: UserService) { }
 
   ngOnInit() {
+    this.hideError()
+    this.loading = true
+    this.userService.getAll()
+      .then(usernames => usernames.map(username => this.userService.getByUsername(username)))
+      .then(requests => Promise.all(requests))
+      .then(users => {
+        const usersByLetter: { [letter: string]: User[] } = users.reduce((acc, user) => {
+          acc[user.Username.charAt(0).toLowerCase()] = user
+          return acc
+        }, { })
+        this.usersByLetter = usersByLetter
+      })
+      .then(() => this.loading = false)
+      .catch(err => {
+        this.loading = false
+        this.displayError(err)
+      })
   }
 
   onClick(user: User) {
+    // TODO: redirect to /user/:username
     console.log(user.Username)
+  }
+
+  displayError(message: string) {
+    this.errorMessage = message
+  }
+
+  hideError() {
+    this.errorMessage = null
   }
 }

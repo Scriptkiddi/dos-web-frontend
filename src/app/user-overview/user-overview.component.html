@@ -1,4 +1,10 @@
 <div class="ui main text container">
+  <div *ngIf="loading" class="ui active dimmer">
+    <div class="ui text loader">Bitte warten...</div>
+  </div>
+  <div *ngIf="errorMessage" class="ui red message">
+    {{errorMessage}}
+  </div>
   <div *ngFor="let item of usersByLetter | objectKeys" class="letter-box">
     <h3 class="ui dividing header">{{item.key | uppercase}}</h3>
     <div class="ui four column grid">
