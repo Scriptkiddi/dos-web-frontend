@@ -32,9 +32,12 @@ export class UserOverviewComponent implements OnInit {
       .then(requests => Promise.all(requests))
       .then(users => {
         const usersByLetter: { [letter: string]: User[] } = users.reduce((acc, user) => {
-          acc[user.Username.charAt(0).toLowerCase()] = user
+          const letter = user.uid.charAt(0).toLowerCase()
+          acc[letter] = acc[letter] || []
+          acc[letter].push(user)
           return acc
         }, { })
+        console.dir(usersByLetter)
         this.usersByLetter = usersByLetter
       })
       .then(() => this.loading = false)
@@ -42,11 +45,6 @@ export class UserOverviewComponent implements OnInit {
         this.loading = false
         this.displayError(err)
       })
-  }
-
-  onClick(user: User) {
-    // TODO: redirect to /user/:username
-    console.log(user.Username)
   }
 
   displayError(message: string) {

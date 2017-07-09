@@ -1,10 +1,10 @@
 export class User {
   constructor(
-    public Username: string,
-    public FirstName: string,
-    public LastName: string,
-    public Credit: number,
-    public Permissions: {
+    public uid: string,
+    public givenName: string,
+    public surname: string,
+    public credit: number,
+    public permissions: {
       Type: string,
       PatchDrinkEveryone: boolean,
       ModSuppliers: boolean,

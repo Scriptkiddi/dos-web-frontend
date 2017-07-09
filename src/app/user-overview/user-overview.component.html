@@ -1,4 +1,4 @@
-<div class="ui main text container">
+<div class="ui main container">
   <div *ngIf="loading" class="ui active dimmer">
     <div class="ui text loader">Bitte warten...</div>
   </div>
@@ -7,9 +7,9 @@
   </div>
   <div *ngFor="let item of usersByLetter | objectKeys" class="letter-box">
     <h3 class="ui dividing header">{{item.key | uppercase}}</h3>
-    <div class="ui four column grid">
-      <div *ngFor="let user of item.value" (click)="onClick(user)" class="column">
-        <div class="ui segment">{{user.FirstName}} {{user.LastName}}</div>
+    <div class="ui doubling stackable four column grid">
+      <div *ngFor="let user of item.value" [routerLink]="['/users', user.uid]" class="column">
+        <div class="ui segment">{{user.givenName}} {{user.surname}}</div>
       </div>
     </div>
   </div>
