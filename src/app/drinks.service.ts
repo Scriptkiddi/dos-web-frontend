@@ -30,7 +30,7 @@ export class DrinksService {
       })
   }
 
-  remove(ean: string): Promise<void> {
+  order(ean: string): Promise<void> {
     return this.http.delete(`${this.drinkEndpoint}/${ean}`, this.requestOptions)
       .toPromise()
       .then(res => {
